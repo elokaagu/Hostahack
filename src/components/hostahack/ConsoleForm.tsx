@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { eyebrow } from "./ui";
 
+const BRIEF_PLACEHOLDER = `Example: A one-day build night in London for about 60 developers and designers who run or belong to online communities. We want people to build tools that help communities find members, collaborate and keep people active after the first event. Saturday 15 November, 10:00 to 20:00, in a studio in Shoreditch. Success means 10 working projects and 3 that communities keep using.`;
+
 const STEPS = [
-  "Reading the client brief and their goals",
+  "Reading your brief and goals",
   "Designing tracks with real hosts and prizes",
   "Weighting the rubric and timing the schedule",
   "Writing rules, mentor needs and success metrics",
@@ -17,7 +19,7 @@ const STEPS = [
   "Finding builders and mentors to invite, with the posts that prove it",
 ];
 
-export function ConsoleForm({ defaultClient, defaultBrief }: { defaultClient: string; defaultBrief: string }) {
+export function ConsoleForm({ defaultClient = "", defaultBrief = "" }: { defaultClient?: string; defaultBrief?: string }) {
   const router = useRouter();
   const [clientName, setClientName] = useState(defaultClient);
   const [brief, setBrief] = useState(defaultBrief);
@@ -53,15 +55,31 @@ export function ConsoleForm({ defaultClient, defaultBrief }: { defaultClient: st
     <div className="space-y-4">
       <div>
         <label className={eyebrow} htmlFor="client">
-          Client
+          Who is hosting
         </label>
-        <Input id="client" value={clientName} onChange={(e) => setClientName(e.target.value)} disabled={pending} className="mt-2 h-12 rounded-full px-5 text-base" />
+        <Input
+          id="client"
+          value={clientName}
+          onChange={(e) => setClientName(e.target.value)}
+          disabled={pending}
+          placeholder="Your community, company or client"
+          className="mt-2 h-12 rounded-full px-5 text-base"
+        />
       </div>
       <div>
         <label className={eyebrow} htmlFor="brief">
-          Client brief: who they are, what they want from the hackathon, dates and targets
+          The brief: who it&apos;s for, what to build, where, when and what success looks like
         </label>
-        <Textarea id="brief" value={brief} onChange={(e) => setBrief(e.target.value)} disabled={pending} rows={14} className="mt-2 rounded-2xl p-5 text-sm leading-relaxed" />
+        <Textarea
+          id="brief"
+          value={brief}
+          onChange={(e) => setBrief(e.target.value)}
+          disabled={pending}
+          rows={10}
+          placeholder={BRIEF_PLACEHOLDER}
+          className="mt-2 rounded-2xl p-5 text-sm leading-relaxed"
+        />
+        <p className="mt-2 text-xs text-muted-foreground">At least 40 characters. A few sentences is enough.</p>
       </div>
       <div className="flex flex-wrap items-center gap-4">
         <Button size="lg" onClick={design} disabled={pending || clientName.trim().length < 2 || brief.trim().length < 40} className="rounded-full bg-brand px-8 text-brand-foreground hover:bg-brand/90">

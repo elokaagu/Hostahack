@@ -2,7 +2,7 @@
 
 A hackathon operating system run by Grok and live X search, built by [Satellite Labs](https://satellitelabs.xyz) to host hackathons on behalf of clients.
 
-**Live demo:** https://satellitelabs.xyz/hostahack (worked example: a hackathon designed for Caligra)
+**Live demo:** https://satellitelabs.xyz/hostahack (design your own from a blank brief, or watch the walkthrough at /hostahack/video)
 
 ## What it does
 
@@ -25,10 +25,10 @@ One system replaces the usual mix of Discord, Google Forms, Devpost and spreadsh
 |------|--------------|
 | `src/app/hostahack` | Landing page, operator console, and per-hackathon pages (overview, register, teams, submit, jury, results) |
 | `src/app/api/hostahack` | Create, and per-hackathon actions |
-| `src/lib/hostahack` | Data access, Grok flows, types, and the Caligra example brief |
+| `src/lib/hostahack` | Data access, Grok flows and types |
 | `src/components/hostahack` | UI for the console, registration, feed, submissions and jury |
 | `supabase/migrations/20261022220000_hostahack.sql` | Database tables (RLS on, server-only access) |
-| `scripts/seed-hostahack-caligra.mjs` | Seeds the Caligra example through the live flow |
+| `scripts/seed-hostahack-example.mjs` | Seeds the walkthrough example through the live flow |
 
 This code was extracted from the Satellite Labs Next.js app. To run it, drop `src/` into a Next.js 15 project with Tailwind and shadcn/ui, install `@supabase/supabase-js`, `@supabase/ssr`, `openai`, `zod`, `clsx` and `tailwind-merge`, copy `.env.example` to `.env.local`, and apply the migration with `supabase db push`.
 

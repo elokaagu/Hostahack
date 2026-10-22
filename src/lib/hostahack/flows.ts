@@ -92,25 +92,44 @@ Success metrics are measurable and tied to the client's goals.`,
 );
 
 export async function designHackathon(clientName: string, brief: string): Promise<{ design: HackDesign; engine: string }> {
-  const user = `Today is ${today()}.
+  const context = `Today is ${today()}.
 Client: ${clientName}
 Client brief:
-${brief.slice(0, 6000)}
+${brief.slice(0, 6000)}`;
 
-Return JSON:
+  // Two smaller calls in parallel: Grok's output speed, not reasoning, sets the latency.
+  const [core, ops] = await Promise.all([
+    smartJson<Record<string, unknown>>(
+      DESIGN_SYSTEM,
+      `${context}
+
+Design the event and its tracks. Return JSON:
 {
   "title": string (max 6 words), "tagline": string (1 sentence), "theme": string (1 sentence),
   "hashtag": string (starts with #, no spaces), "date": string, "venue": string, "format": string (e.g. "One day, in person"),
   "capacity": number, "audience": string (who should apply, 1 sentence),
   "tracks": [{ "id": string (kebab-case), "name": string, "brief": string (2 sentences), "host": string, "prize": string }] (3 or 4),
-  "rubric": [{ "id": string (kebab-case), "name": string, "weight": number, "description": string }] (4 or 5, weights sum to 100),
-  "schedule": [{ "time": string, "item": string }] (8 to 10),
-  "rules": string[] (5 to 7),
-  "prizes": [{ "name": string, "value": string }] (3 to 5),
+  "prizes": [{ "name": string, "value": string }] (3 to 5)
+}`,
+      150_000,
+    ),
+    smartJson<Record<string, unknown>>(
+      DESIGN_SYSTEM,
+      `${context}
+
+Design how the event runs and is judged. Return JSON:
+{
+  "rubric": [{ "id": string (kebab-case), "name": string, "weight": number, "description": string (1 sentence) }] (4 or 5, weights sum to 100),
+  "schedule": [{ "time": string (HH:MM), "item": string }] (8 to 10),
+  "rules": string[] (5 to 7, one sentence each),
   "mentorNeeds": [{ "role": string, "why": string }] (3 to 4),
   "successMetrics": [{ "measure": string, "target": string }] (4 to 5)
-}`;
-  const { data, engine } = await smartJson<Record<string, unknown>>(DESIGN_SYSTEM, user);
+}`,
+      150_000,
+    ),
+  ]);
+  const data = { ...ops.data, ...core.data };
+  const engine = core.engine === ops.engine ? core.engine : `${core.engine} + ${ops.engine}`;
 
   const tracks = arr(data.tracks)
     .map((t, i) => ({
@@ -189,7 +208,7 @@ Return JSON:
   "invite": [{ "handle": string, "name": string, "why": string, "kind": "builder" | "mentor", "url": string (a post of theirs you found) }] (6 people)
 }`,
       xSearch: { fromDate: recentWindow(45), maxTurns: 3 },
-      timeoutMs: 100_000,
+      timeoutMs: 150_000,
     });
 
     const invite = arr(data.invite)
@@ -358,7 +377,7 @@ ${solo.map(participantLine).join("\n") || "none"}
 Return JSON:
 { "teamId": string | null (an open team id, or null to start a new team), "why": string (1 to 2 sentences), "role": string (their role in the team),
   "teammates": [{ "participantId": string, "why": string }] (2 or 3 people: team members if joining a team, else people without a team) }`,
-    60_000,
+    90_000,
   );
 
   const team = openTeams.find((t) => t.id === str(data.teamId, 40)) ?? null;
@@ -392,7 +411,7 @@ ${solo.map(participantLine).join("\n")}
 
 Return JSON: { "teams": [{ "name": string, "trackId": string, "rationale": string, "memberIds": string[] }] }
 Use every participant exactly once. Teams of 3 or 4; a team of 2 only if nothing else works.`,
-    80_000,
+    120_000,
   );
 
   const pool = new Set(solo.map((p) => p.id));
@@ -430,7 +449,7 @@ Team: ${teamMembers.map((m) => `${m.display_name} (${(m.profile?.skills ?? m.ski
 Return JSON:
 { "scores": [{ "criterionId": string, "score": number, "reason": string }] (one per rubric criterion),
   "summary": string (1 to 2 sentences), "strengths": string[] (2 to 3), "questions": string[] (2) }`,
-    60_000,
+    100_000,
   );
 
   const ids = new Set(h.design.rubric.map((c) => c.id));
@@ -480,8 +499,9 @@ Return JSON:
 { "followUps": [{ "participantId": string, "message": string, "why": string }] (6),
   "champions": [{ "participantId": string, "reason": string }] (4),
   "nextEvents": [{ "title": string, "when": string, "why": string }] (3),
-  "scorecard": [{ "measure": string, "status": string }] (one per success metric, with what this hackathon achieved so far) }`,
-    80_000,
+  "scorecard": [{ "measure": string, "status": string }] (one per success metric, with what this hackathon achieved so far) }
+Keep every message under 60 words.`,
+    150_000,
   );
 
   const ids = new Set(participants.map((p) => p.id));

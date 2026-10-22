@@ -1,4 +1,3 @@
-import { getFlagshipDemo } from "@/lib/hostahack/load";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -65,22 +64,13 @@ const STAGES = [
   { n: "04", name: "After", body: "Judges finalise, results publish, and Grok drafts the follow-ups that keep the community building with the client." },
 ];
 
-export default async function HostahackLanding() {
-  const demo = await getFlagshipDemo().catch(() => null);
-  const base = demo ? `/hostahack/${demo.slug}` : null;
-  const juryKey = demo ? encodeURIComponent(demo.jury_key) : "";
+const START = [
+  { n: "1", body: "Say who is hosting and describe the event in a few sentences." },
+  { n: "2", body: "Grok designs it and finds builders on X in about a minute. Review the design and publish the page." },
+  { n: "3", body: "Share the page. Register yourself with your X handle, form teams, submit a project and judge it from the jury room." },
+];
 
-  const links = base
-    ? [
-        { href: base, label: "Hackathon page", body: "What builders see: tracks, schedule, prizes, rules and the live X feed." },
-        { href: `${base}/design?key=${juryKey}`, label: "Design", body: "The full design Grok produced from Caligra's brief, with the X research." },
-        { href: `${base}/register`, label: "Register yourself", body: "Enter your X handle. Get your profile and a team match in under a minute." },
-        { href: `${base}/teams`, label: "Teams", body: "Balanced teams with the reason each mix works." },
-        { href: `${base}/jury?key=${juryKey}`, label: "Jury room", body: "Grok's pre-scores with reasons. Adjust, save and finalise." },
-        { href: `${base}/results`, label: "Results and after", body: "Ranking, track prizes, follow-ups, champions and next events." },
-      ]
-    : [];
-
+export default function HostahackLanding() {
   const today = COMPARISON.reduce((s, r) => s + parseFloat(r.hours[0]), 0);
   const withHostahack = COMPARISON.reduce((s, r) => s + parseFloat(r.hours[1]), 0);
 
@@ -102,44 +92,29 @@ export default async function HostahackLanding() {
           the right builders, matches teams, keeps a live feed, pre-scores every submission and drafts the follow-ups.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          {base ? (
-            <Link href={base} className="rounded-full bg-brand px-7 py-3.5 text-sm text-brand-foreground hover:bg-brand/90">
-              Open the Caligra build day
-            </Link>
-          ) : null}
-          {base ? (
-            <Link href={`${base}/register`} className="rounded-full border border-border/60 px-7 py-3.5 text-sm hover:border-brand">
-              Register with your X handle
-            </Link>
-          ) : null}
-          <Link href="/hostahack/console" className="rounded-full border border-border/60 px-7 py-3.5 text-sm hover:border-brand">
-            Design your own hackathon
+          <Link href="/hostahack/console" className="rounded-full bg-brand px-7 py-3.5 text-sm text-brand-foreground hover:bg-brand/90">
+            Design your hackathon
+          </Link>
+          <Link href="/hostahack/video" className="rounded-full border border-border/60 px-7 py-3.5 text-sm hover:border-brand">
+            Watch the 2-minute walkthrough
           </Link>
         </div>
 
-        {links.length ? (
-          <section className="mt-20">
-            <p className={eyebrow}>For the jury · live demo with Caligra</p>
-            <h2 className="mt-2 font-serif text-3xl tracking-tight md:text-4xl">{demo?.design.title}: every stage, live</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Caligra makes Workbench and the c100 Developer Terminal. Satellite is running its first London build day. This demo was designed from Caligra&apos;s real
-              brief with live Grok and X search; the builders, teams and projects in it are demo participants so you can see a full event, and you can register
-              yourself. The jury links below include the jury key.
-            </p>
-            <ul className="mt-8 grid gap-3 md:grid-cols-3">
-              {links.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="block h-full rounded-2xl border border-border/50 p-5 transition-colors hover:border-brand">
-                    <p className="text-base">
-                      {l.label} <span className="text-brand">→</span>
-                    </p>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{l.body}</p>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+        <section className="mt-20">
+          <p className={eyebrow}>For the jury · build one from scratch</p>
+          <h2 className="mt-2 font-serif text-3xl tracking-tight md:text-4xl">Your own hackathon, live, in about two minutes</h2>
+          <ol className="mt-8 grid gap-3 md:grid-cols-3">
+            {START.map((s) => (
+              <li key={s.n} className="rounded-2xl border border-border/50 p-5">
+                <span className="font-mono text-xs text-brand">{s.n}</span>
+                <p className="mt-3 text-sm leading-relaxed">{s.body}</p>
+              </li>
+            ))}
+          </ol>
+          <Link href="/hostahack/console" className="mt-6 inline-block text-sm text-brand hover:underline">
+            Start with a blank brief →
+          </Link>
+        </section>
 
         <section className="mt-20">
           <p className={eyebrow}>Four stages, one system</p>
@@ -204,8 +179,8 @@ export default async function HostahackLanding() {
           <p className={`${eyebrow} text-brand`}>Why it matters to a real community</p>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed">
             Most of a hackathon&apos;s value comes from who meets whom and what they do next. Hostahack puts the people in the middle: builders are found from what
-            they actually post, matched on the gap they fill, judged with care and followed up personally. For a client like Caligra, that turns one build day
-            into champions inside the companies it wants to win.
+            they actually post, matched on the gap they fill, judged with care and followed up personally. For a company hosting with Satellite, one build day
+            leaves it with champions inside the communities it wants to reach.
           </p>
         </section>
 

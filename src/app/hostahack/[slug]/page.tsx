@@ -53,6 +53,7 @@ export default async function HackOverview({ params }: { params: Promise<{ slug:
       ) : null}
 
       <Section label="Tracks" title="Real problems, with a host and a prize">
+        <p className="-mt-2 mb-5 text-xs text-muted-foreground">Track hosts are proposed by Hostahack from the client&apos;s target accounts until each one confirms.</p>
         <div className="grid gap-4 md:grid-cols-2">
           {d.tracks.map((t) => (
             <Card key={t.id}>

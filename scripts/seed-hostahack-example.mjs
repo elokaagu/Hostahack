@@ -1,8 +1,7 @@
-// Seeds the flagship Caligra hackathon through Hostahack's real API flow.
-// Usage: node scripts/seed-hostahack-caligra.mjs [baseUrl]
+// Seeds the example hackathon used in the /hostahack/video walkthrough, through Hostahack's real API flow.
+// Usage: node scripts/seed-hostahack-example.mjs [baseUrl]
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
-import { readFileSync } from "node:fs";
 
 dotenv.config({ path: ".env.local", quiet: true });
 
@@ -11,8 +10,8 @@ const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABA
   auth: { persistSession: false },
 });
 
-const briefSrc = readFileSync("src/lib/hostahack/caligra-brief.ts", "utf8");
-const CALIGRA_BRIEF = briefSrc.match(/CALIGRA_BRIEF = `([\s\S]*?)`;/)[1];
+const HOST = "London Builders Night";
+const BRIEF = `A one-day build night in London for about 60 developers, designers and community organisers. The theme is community infrastructure: tools that help communities find new members, collaborate across groups, run events and keep people active after the first meetup. Builders should leave with working prototypes that a real community could start using the following week, and every project should be open source so other communities can fork and run it. Saturday 15 November, 10:00 to 20:00, in a studio in Shoreditch, with lunch, mentors on hand and demos to a small jury at 18:00. Success means at least 10 working projects, 3 that a community keeps using a month later, and most builders joining the next event.`;
 
 async function call(path, body) {
   const t = Date.now();
@@ -82,7 +81,7 @@ Tracks: ${design.tracks.map((t) => `${t.id}: ${t.name} — ${t.brief}`).join("\n
 Teams (id | name | track | members and skills):
 ${teams.map((t) => `${t.id} | ${t.name} | ${t.track_id} | ${members.filter((m) => m.team_id === t.id).map((m) => `${m.display_name} (${m.skills.join(", ")})`).join("; ")}`).join("\n")}
 
-Write one submission per team, varied in ambition and quality (some excellent, some rough), built on Caligra Workbench and the c100.
+Write one submission per team, varied in ambition and quality (some excellent, some rough), each solving a real problem for an online or local community.
 Return JSON: { "submissions": [{ "teamId": string, "trackId": string, "title": string, "link": string (a plausible https://github.com/... URL), "description": string (3 to 4 sentences) }] }`,
         },
       ],
@@ -95,7 +94,7 @@ Return JSON: { "submissions": [{ "teamId": string, "trackId": string, "title": s
   return JSON.parse(cleaned.slice(cleaned.indexOf("{"), cleaned.lastIndexOf("}") + 1)).submissions;
 }
 
-const created = await call("/api/hostahack/create", { clientName: "Caligra", brief: CALIGRA_BRIEF });
+const created = await call("/api/hostahack/create", { clientName: HOST, brief: BRIEF });
 const { id, slug, juryKey } = created;
 console.log("created", slug, "engine", created.engine);
 await db.from("hostahack_hackathons").update({ sandbox: false }).eq("id", id);
@@ -125,7 +124,7 @@ const { data: scored } = await db.from("hostahack_submissions").select("*").eq("
 const ranked = scored.sort((a, b) => (b.ai_review?.total ?? 0) - (a.ai_review?.total ?? 0));
 for (const [i, s] of ranked.slice(0, 2).entries()) {
   const scores = Object.fromEntries((s.ai_review?.scores ?? []).map((x) => [x.criterionId, Math.min(10, x.score + (i === 0 ? 0.5 : -0.5))]));
-  await call(`/api/hostahack/${id}/judge`, { key: juryKey, submissionId: s.id, scores, note: i === 0 ? "Strongest live demo of the day; the c100 integration was real." : "Great idea, the demo was rough on stage." });
+  await call(`/api/hostahack/${id}/judge`, { key: juryKey, submissionId: s.id, scores, note: i === 0 ? "Strongest live demo of the day; a real community could use this next week." : "Great idea, the demo was rough on stage." });
 }
 await call(`/api/hostahack/${id}/finalise`, { key: juryKey });
 await call(`/api/hostahack/${id}/after`, { key: juryKey });

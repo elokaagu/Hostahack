@@ -1,10 +1,9 @@
 import { ConsoleForm } from "@/components/hostahack/ConsoleForm";
-import { CALIGRA_BRIEF, CALIGRA_CLIENT } from "@/lib/hostahack/caligra-brief";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Operator console · Hostahack",
+  title: "Design your hackathon · Hostahack",
   robots: { index: false, follow: false },
 };
 
@@ -15,16 +14,17 @@ export default function HostahackConsolePage() {
         <Link href="/hostahack" className="font-mono text-xs uppercase tracking-[0.14em] text-brand">
           Hostahack · Satellite Studio
         </Link>
-        <h1 className="mt-6 font-serif text-4xl font-normal leading-[1] tracking-[-0.02em] md:text-6xl">Design a hackathon from a client brief</h1>
+        <h1 className="mt-6 font-serif text-4xl font-normal leading-[1] tracking-[-0.02em] md:text-6xl">Design your hackathon</h1>
         <p className="mt-5 text-base leading-relaxed text-muted-foreground">
-          Paste what the client told you. Grok designs the whole event and researches X for the builders and mentors to invite. You review the design, then publish the
-          hackathon page in one click. The Caligra brief is filled in so you can try it.
+          Say who is hosting and describe the event in a few sentences: who it&apos;s for, what you want people to build, where and when. Grok designs the whole
+          hackathon and searches X for builders and mentors worth inviting. You review the design, then publish the hackathon page in one click and run it from there.
         </p>
         <p className="mt-3 text-xs text-muted-foreground">
-          Signed-in Satellite operators create client hackathons. Everyone else creates a sandbox hackathon, which works the same way.
+          Anyone can create a hackathon here. Satellite operators who are signed in create client hackathons; everyone else creates a sandbox hackathon that works the
+          same way.
         </p>
         <div className="mt-10">
-          <ConsoleForm defaultClient={CALIGRA_CLIENT} defaultBrief={CALIGRA_BRIEF} />
+          <ConsoleForm />
         </div>
       </div>
     </main>

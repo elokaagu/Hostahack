@@ -6,7 +6,7 @@ import type { Hackathon } from "./types";
 
 export const getBundle = cache(async (slug: string) => loadBundle(slug));
 
-/** The flagship client demo shown on the landing page. */
+/** The example hackathon shown in the /hostahack/video walkthrough. */
 export const getFlagshipDemo = cache(async (): Promise<Pick<Hackathon, "slug" | "jury_key" | "client_name" | "design" | "status"> | null> => {
   const { data } = await hackDb()
     .from("hostahack_hackathons")

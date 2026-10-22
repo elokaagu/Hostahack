@@ -4,7 +4,7 @@ import { getOsApiUser } from "@/lib/os-api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-export const maxDuration = 180;
+export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 const bodySchema = z
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await hackDb()
       .from("hostahack_hackathons")
       .insert({
-        slug: slugify(`${clientName} ${design.title}`),
+        slug: slugify(design.title.toLowerCase().includes(clientName.toLowerCase()) ? design.title : `${clientName} ${design.title}`),
         client_name: clientName,
         client_brief: brief,
         status: "draft",
