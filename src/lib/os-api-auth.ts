@@ -2,11 +2,12 @@ import { createClient, type User } from "@supabase/supabase-js";
 import type { NextRequest } from "next/server";
 
 /**
- * Operator auth for Hostahack's console routes. Verifies the Supabase access
- * token sent as a Bearer header. Set HOSTAHACK_OPERATOR_EMAILS (comma-separated)
- * to limit operator actions to named accounts.
+ * Operator auth for Host's console routes. Verifies the Supabase access
+ * token sent as a Bearer header. Set HOST_OPERATOR_EMAILS (comma-separated)
+ * to limit operator actions to named accounts. HOSTAHACK_OPERATOR_EMAILS is
+ * still read as a fallback for installs set up before the rename.
  */
-const OPERATOR_EMAILS = (process.env.HOSTAHACK_OPERATOR_EMAILS ?? "")
+const OPERATOR_EMAILS = (process.env.HOST_OPERATOR_EMAILS ?? process.env.HOSTAHACK_OPERATOR_EMAILS ?? "")
   .split(",")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);

@@ -1,10 +1,14 @@
-# Hostahack
+# Host
 
-A hackathon operating system run by Grok and live X search, built by [Satellite Labs](https://satellitelabs.xyz) to host hackathons on behalf of clients.
+Host is the event infrastructure [Satellite Labs](https://satellitelabs.xyz) runs on Grok and live X search. It plans dinners, salons, meetups, panels and hackathons from a brief, finds guests, drafts invites, publishes a public event page with RSVPs, and writes intros and follow-ups.
 
-**Live demo:** https://satellitelabs.xyz/hostahack (design your own from a blank brief, or watch the walkthrough at /hostahack/video)
+This repository holds Host's hackathon module, which Satellite uses to design, build and run hackathons for clients.
 
-## What it does
+**Live:** https://satellitelabs.xyz/host (plan your own event from a blank brief, or watch the hackathon walkthrough at /host/video)
+
+Host was previously called Hostahack. Old links to github.com/elokaagu/Hostahack and satellitelabs.xyz/hostahack redirect here.
+
+## What the hackathon module does
 
 1. **Design.** An operator pastes a client brief. Grok designs the event: theme, tracks, a weighted judging rubric, schedule, rules and prizes. Live X search finds what builders are posting about the theme and who is worth inviting, with links to real posts.
 2. **Build.** One click publishes a branded public hackathon page with registration.
@@ -23,14 +27,18 @@ One system replaces the usual mix of Discord, Google Forms, Devpost and spreadsh
 
 | Path | What's there |
 |------|--------------|
-| `src/app/hostahack` | Landing page, operator console, and per-hackathon pages (overview, register, teams, submit, jury, results) |
-| `src/app/api/hostahack` | Create, and per-hackathon actions |
-| `src/lib/hostahack` | Data access, Grok flows and types |
-| `src/components/hostahack` | UI for the console, registration, feed, submissions and jury |
-| `supabase/migrations/20261022220000_hostahack.sql` | Database tables (RLS on, server-only access) |
-| `scripts/seed-hostahack-example.mjs` | Seeds the walkthrough example through the live flow |
+| `src/app/host` | Landing page, operator console, and per-hackathon pages (overview, register, teams, submit, jury, results) |
+| `src/app/api/host` | Create, and per-hackathon actions |
+| `src/lib/host` | Data access, Grok flows and types |
+| `src/components/host` | UI for the console, registration, feed, submissions and jury |
+| `supabase/migrations` | Database tables (RLS on, server-only access). The second migration renames the original `hostahack_*` tables to `host_*`. |
+| `scripts/seed-host-example.mjs` | Seeds the walkthrough example through the live flow |
 
-This code was extracted from the Satellite Labs Next.js app. To run it, drop `src/` into a Next.js 15 project with Tailwind and shadcn/ui, install `@supabase/supabase-js`, `@supabase/ssr`, `openai`, `zod`, `clsx` and `tailwind-merge`, copy `.env.example` to `.env.local`, and apply the migration with `supabase db push`.
+This code was extracted from the Satellite Labs Next.js app. To run it, drop `src/` into a Next.js 15 project with Tailwind and shadcn/ui, install `@supabase/supabase-js`, `@supabase/ssr`, `openai`, `zod`, `clsx` and `tailwind-merge`, copy `.env.example` to `.env.local`, and apply the migrations with `supabase db push`.
+
+### Upgrading from Hostahack
+
+Run `supabase db push` to apply the rename migration, and rename `HOSTAHACK_OPERATOR_EMAILS` to `HOST_OPERATOR_EMAILS` (the old name is still read as a fallback).
 
 ## Licence
 
